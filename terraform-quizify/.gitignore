@@ -1,0 +1,39 @@
+# ===================================
+# Terraform local state & backups
+# ===================================
+*.tfstate
+*.tfstate.backup
+terraform.tfstate*
+crash.log
+crash.*.log
+
+# Local terraform working dirs
+.terraform/
+.terraform.lock.hcl
+
+# Terraform variable files (sensitive)
+terraform.tfvars
+*.tfvars
+*.auto.tfvars
+
+# Terraform plan output
+*.tfplan
+*.plan
+
+# Sensitive files or secrets
+*.pem
+*.key
+*.p12
+*.crt
+
+# Bootstrap and temp backups
+bootstrap/terraform.tfstate
+bootstrap/terraform.tfstate.backup
+bootstrap/.terraform/
+bootstrap/.terraform.lock.hcl
+
+# Logs
+*.log
+
+# Ignore example configs (if they are not needed in git)
+terraform.tfvars.example

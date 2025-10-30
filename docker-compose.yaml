@@ -1,0 +1,84 @@
+
+
+  # services:
+  #   frontend:
+  #     build: "./mcq_frontend"
+  #     ports:
+  #       - "3000:80"
+  #     depends_on:
+  #       - backend
+  #     networks:
+  #       - app-network
+
+  #   backend:
+  #     build: ./mcq_backend
+  #     ports:
+  #       - "3001:3001"
+  #     env_file:
+  #       - ./mcq_backend/.env
+  #     networks:
+  #       - app-network
+  #     restart: always
+
+  # networks:
+  #   app-network:
+  #     driver: bridge
+
+# //above till 6oct 5 ebfore addign promethes and grafana
+
+services:
+  frontend:
+    build: "./mcq_frontend"
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build: ./mcq_backend
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./mcq_backend/.env
+    networks:
+      - app-network
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=AdminPass123    # change this for production
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3002:3000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-storage:

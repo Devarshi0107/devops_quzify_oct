@@ -1,0 +1,6 @@
+# Root Terraform state files
+terraform.tfstate
+terraform.tfstate.backup
+# Terraform working directory
+terraform-quizify/.terraform/
+terraform-quizify/bootstrap/.terraform/
