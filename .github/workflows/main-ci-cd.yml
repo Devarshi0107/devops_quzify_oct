@@ -53,28 +53,35 @@ jobs:
 
   # 🐳 Step 3: Build & Push Docker Images
   docker:
-    name: Build & Push Docker Images
-    runs-on: ubuntu-latest
-    needs: [backend, frontend]
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+     name: Build & Push Docker Images
+     runs-on: ubuntu-latest
+     needs: [backend, frontend]
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
-        with:
+     steps:
+       - name: Checkout Code
+         uses: actions/checkout@v4
+
+       - name: Login to DockerHub
+         uses: docker/login-action@v3
+         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Backend Image
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/quizify-backend:latest ./mcq_backend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/quizify-backend:latest
+       - name: Build and Push Backend Image
+         uses: docker/build-push-action@v5
+         with:
+          context: ./mcq_backend
+          file: ./mcq_backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/quizify-backend:latest
 
-      - name: Build and Push Frontend Image
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/quizify-frontend:latest ./mcq_frontend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/quizify-frontend:latest
+       - name: Build and Push Frontend Image
+         uses: docker/build-push-action@v5
+         with:
+          context: ./mcq_frontend
+          file: ./mcq_frontend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/quizify-frontend:latest
 
   # 🌍 Step 4: Terraform Deploy to AWS
   # terraform:
